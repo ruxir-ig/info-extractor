@@ -1,15 +1,10 @@
 import json
-import os
 from io import BytesIO
 
 import pandas as pd
 import streamlit as st
-from dotenv import load_dotenv
 from google import genai
 from google.genai import types
-
-# load environment variables
-load_dotenv()
 
 # setup page
 st.set_page_config(page_title="Info Extractor", layout="wide")
@@ -20,12 +15,18 @@ st.markdown("""
     into well-organized, Excel-ready structured data using AI.
 """)
 
-# get api key
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+# get api key from streamlit secrets
+try:
+    GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
+except (KeyError, FileNotFoundError):
+    st.error(
+        "GEMINI_API_KEY not found. Please add it to your .streamlit/secrets.toml file."
+    )
+    st.stop()
 
 if not GEMINI_API_KEY:
     st.error(
-        "GEMINI_API_KEY not found in environment variables. Please add it to your .env file."
+        "GEMINI_API_KEY not found. Please add it to your .streamlit/secrets.toml file."
     )
     st.stop()
 
