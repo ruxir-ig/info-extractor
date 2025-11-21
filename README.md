@@ -2,6 +2,8 @@
 
 A quick tool to extract data from PDFs and convert to Excel using Google Gemini AI.
 
+Use it here: https://infoextractor.streamlit.app/
+
 ## What it does
 
 Takes a PDF file, uses AI to extract the data, and gives you a clean Excel file with everything organized.
