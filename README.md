@@ -20,10 +20,10 @@ pip install -r requirements.txt
 
 ### Configure API Key
 
-Make a `.env` file and add your key:
+Make a `.streamlit/secrets.toml` file and add your key:
 
 ```
-GEMINI_API_KEY=your_key_here
+GEMINI_API_KEY = "your-api-key-here"
 ```
 
 ### Run it
