@@ -12,9 +12,9 @@ from google.genai import types
 load_dotenv()
 
 # setup page
-st.set_page_config(page_title="AI Doc Extractor", layout="wide")
+st.set_page_config(page_title="Info Extractor", layout="wide")
 
-st.title("AI-Powered Document to Excel Converter")
+st.title("Info Extractor: AI-Powered Document data extractor")
 st.markdown("""
     **Project Goal:** Automate the conversion of unstructured PDF documents
     into well-organized, Excel-ready structured data using AI.
