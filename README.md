@@ -1,83 +1,63 @@
-# AI-Powered Document to Excel Converter
+# PDF to Excel Converter
 
-Convert unstructured PDF data into structured Excel files using Google Gemini AI.
+A quick tool to extract data from PDFs and convert to Excel using Google Gemini AI.
 
-## Features
+## What it does
 
-- Extract data from PDF documents automatically
-- Structure data into Key-Value-Comments format
-- Export to Excel with serial numbers
-- Powered by Google Gemini 2.5 Flash
+Takes a PDF file, uses AI to extract the data, and gives you a clean Excel file with everything organized.
 
-## Setup Instructions
+## Setup
 
-### 1. Clone the Repository
+### You'll need:
+- Python
+- Google Gemini API key (get it free from https://aistudio.google.com)
 
-```bash
-git clone <repository-url>
-cd Turerz-Assignment
-```
-
-### 2. Install Dependencies
+### Install
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Configure Environment Variables
+### Configure API Key
 
-Create a `.env` file in the project root:
-
-```bash
-cp .env.example .env
-```
-
-Edit the `.env` file and add your Gemini API key:
+Make a `.env` file and add your key:
 
 ```
-GEMINI_API_KEY=your_actual_api_key_here
+GEMINI_API_KEY=your_key_here
 ```
 
-**Get your API key from:** https://aistudio.google.com
-
-### 4. Run the Application
+### Run it
 
 ```bash
 streamlit run streamlit_app.py
 ```
 
-The application will open in your browser at `http://localhost:8501`
+Opens at `http://localhost:8501`
 
-## Usage
+## How to use
 
-1. Upload your PDF document using the file uploader
-2. Click "Start Extraction"
-3. Review the extracted data in the table
-4. Download the structured Excel file
+1. Upload PDF
+2. Click "Start Extraction"  
+3. Check the table
+4. Download Excel file
 
-## Requirements
+## Features
 
-- Python 3.8+
-- Google Gemini API Key
-- Internet connection for API calls
+- Uses Gemini 2.5 Flash AI model
+- Extracts data into Key-Value-Comments format
+- Splits education, work experience into separate fields
+- Exports to Excel with serial numbers
 
-## Project Structure
+## Tech used
 
-```
-Turerz-Assignment/
-├── streamlit_app.py      # Main application
-├── requirements.txt      # Python dependencies
-├── .env.example         # Environment variables template
-├── .env                 # Your API keys (git-ignored)
-└── README.md           # This file
-```
+- Streamlit (web interface)
+- Pandas (data handling)
+- Google Gemini API (AI extraction)
+- OpenPyXL (Excel export)
 
-## Security
+## Notes
 
-- Never commit your `.env` file to version control
-- The `.env` file is already included in `.gitignore`
-- Keep your API keys secure and private
+- Don't commit the .env file (already in .gitignore)
+- If extraction fails, check if PDF is text-based (not scanned image)
+- Large files might take 30+ seconds
 
-## License
-
-MIT
