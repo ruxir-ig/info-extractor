@@ -36,79 +36,52 @@ def extract_with_gemini(file_bytes, api_key):
     client = genai.Client(api_key=api_key)
 
     prompt = """
-    # ROLE & TASK
-    You are a highly precise data extraction specialist. Extract structured information from the document I provide and output it as a markdown table with extreme attention to detail and accuracy.
+    You are a Data Extraction Specialist. Your goal is to convert the provided text into a strict, granular Excel-ready JSON format.
     
-    # OUTPUT FORMAT
-    Produce a markdown table with EXACTLY 5 columns:
-    1. **#**: Serial number starting from 1
-    2. **Key**: The field name/attribute
-    3. **Value**: The extracted value
-    4. **Comments**: Additional context (can keep blank)
+    **Example:**
+        - *Text:* "Born in the Pink City (Jaipur), which provides regional context."
+        - *Extraction:*
+        {
+          "Key": "Birth City",
+          "Value": "Jaipur",    
+          "Comments": "Born and raised in the Pink City of India, provides regional profiling context."
+        }
     
-    # EXTRACTION RULES
     
-    ## 1. DATE HANDLING
-    - Complete dates → ISO 8601: YYYY-MM-DD HH:MM:SS (e.g., "March 15, 1989" → "1989-03-15 00:00:00")
-    - Partial dates → Use only available info (year-only → "2007")
-    - Date ranges → Separate rows for start and end dates
-    - Never invent missing day/month
-    
-    ## 2. NUMERIC VALUES
-    - Remove commas (350,000 → 350000)
-    - Separate value from unit in different rows
-    - Scores: Value in Value column, maximum in Comments ("Out of 1000")
-    
-    ## 3. MULTI-PART ENTITIES
-    Create separate rows per attribute with consistent prefixes:
-    - **Current role**: Current Organization, Current Joining Date, Current Designation, Current Salary, Current Salary Currency
-    - **Previous role**: Previous Organization, Previous Joining Date, Previous End Year, Previous Starting Designation
-    - **First role**: Joining Date of first professional role, Designation of first professional role, Salary of first professional role, Salary currency of first professional role
-    - **Education**: High School, 12th standard pass out year, 12th overall board score, Undergraduate degree, Undergraduate college, Undergraduate year, Undergraduate CGPA, Graduation degree, Graduation college, Graduation year, Graduation CGPA
-    - **Certifications**: Certifications 1, Certifications 2, Certifications 3... (numbered sequentially)
-    
-    ## 4. INFORMATION STRATEGY
-    - Read ENTIRE document first to understand context
-    - Resolve all pronouns ("his", "he" → actual person)
-    - Link related info across sentences
-    - Calculate implicit info (age from birth date + reference year)
-    
-    ## 5. NAME & LOCATION PARSING
-    - Split names: First Name, Last Name
-    - Split locations: Birth City, Birth State
-    
-    ## 6. COMMENTS FIELD
-    **Include**: Context from source, qualifiers ("outstanding", "with honors"), scale info ("On a 10-point scale"), rankings ("15th among 120"), temporal notes ("As of 2024", "Promoted in 2019")
-    
-    **Exclude**: Info that should be its own row, redundant restatements
-    
-    ## 7. LISTS
-    - Enumerate: Certifications 1, Certifications 2...
-    - Maintain chronological order
-    
-    ## 8. MISSING INFO
-    - NEVER hallucinate or invent information
-    
-    ## 9. SPECIAL VALUES
-    - Blood groups: Exact format (O+, A-)
-    - Abbreviations: Preserve (B.Tech, M.Tech, AWS)
-    - CGPA: Note scale in Comments
-    
-    ## 10. CONSISTENCY
-    - Consecutive serial numbers starting from 1
-    - Consistent Key naming throughout
-    
-    # QUALITY CHECKLIST
-    - All serial numbers consecutive
-    - All dates properly formatted
-    - Currency amounts and codes in separate rows
-    - Scores include maximum in Comments
-    - No hallucinated information
-    - ALL available information extracted
-    
-    Now extract all information from the following document:
-    """
+    1. FORMATTING STANDARDS 
+    * **Dates:** Convert ALL dates to **DD-Mon-YY** where Mon stands for the abbreviated month name.
+        - Example: "March 15, 1989" -> "15-Mar-89"
+    * **Names:** Split full names into "First Name" and "Last Name".
+    * **Locations:** Split full locations into "City" and "State", if required further splitting could be used.
+    * **Currency:** Keep numbers clean (e.g., "350,000 INR").
 
+    2. "RICH COMMENT" and Extra Information
+    The comments are any extra information that is not directly related to the key-value pair, keep the wording in comments as it is from the source.
+    
+    Comments are not necessary for all keys, but if additional information is present, it should be included as a comment, but when not present leaving it blank also works.
+    
+    vague feilds can also have only comments, for eg. 
+    
+    You can put current data in separate keys like "Current Organisation", "Current Joining Date", "Current Salary", "Current Designation" and then add respective extra information as comments.
+    
+    Similare for any "Previous ..." data...
+    
+    Then in education, segregate, High School: name, 12th Standard pass out year, 12th grade,  Undergraduate Degree, College, year, CGPA, (with Undergarduate prefix), Same for Gradutation.
+    
+    Then list all certificates separately with a no. following each key, each certificate should be only mentioned once, and other information should be included as comments.
+    
+    and then also add proficiency (not in detail, 1 feild would work)
+    
+    Extract information from pdf document and return it in a JSON format.
+    Directly give answer, no conversation is required.
+    
+    data should be in #, key, value, and comments for extra context related to data
+        
+    any other field should be handled appropriately, by your instincts and common sense, by using previously provided information.
+    keep feild names logical and humanly understandable.
+    
+    
+    """
     response = client.models.generate_content(
         model="gemini-2.5-flash",
         contents=[
